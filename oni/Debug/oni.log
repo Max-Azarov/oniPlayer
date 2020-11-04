@@ -9,5 +9,4 @@
   tools.cpp
   moc_mainwindow.cpp
   moc_imagewindow.cpp
-tools.obj : error LNK2019: ссылка на неразрешенный внешний символ "void __cdecl cv::cvtColor(class cv::debug_build_guard::_InputArray const &,class cv::debug_build_guard::_OutputArray const &,int,int)" (?cvtColor@cv@@YAXABV_InputArray@debug_build_guard@1@ABV_OutputArray@31@HH@Z) в функции "public: static struct tools::Pairs __cdecl tools::frames(char const *)" (?frames@tools@@SA?AUPairs@1@PBD@Z)
-C:\Users\monstr\Desktop\oni\Debug\oni.exe : fatal error LNK1120: неразрешенных внешних элементов: 1
+  oni.vcxproj -> C:\Users\monstr\Desktop\oni — копия\Debug\oni.exe

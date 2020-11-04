@@ -77,6 +77,8 @@ Useful links:
 http://www.inf.ufrgs.br/~eslgastal/DomainTransform
 
 https://www.learnopencv.com/non-photorealistic-rendering-using-opencv-python-c/
+
+    @defgroup photo_c C API
 @}
   */
 
@@ -852,9 +854,5 @@ CV_EXPORTS_W void stylization(InputArray src, OutputArray dst, float sigma_s = 6
 //! @} photo
 
 } // cv
-
-#ifndef DISABLE_OPENCV_24_COMPATIBILITY
-#include "opencv2/photo/photo_c.h"
-#endif
 
 #endif

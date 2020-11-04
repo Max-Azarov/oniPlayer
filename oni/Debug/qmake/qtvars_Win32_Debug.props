@@ -1,7 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
 <Qt_DEFINES_>UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;QT_WIDGETS_LIB;QT_MULTIMEDIA_LIB;QT_GUI_LIB;QT_NETWORK_LIB;QT_CORE_LIB</Qt_DEFINES_>
-<Qt_INCLUDEPATH_>D:\Qt\5.13.2\msvc2017\include;D:\Qt\5.13.2\msvc2017\include\QtWidgets;D:\Qt\5.13.2\msvc2017\include\QtMultimedia;D:\Qt\5.13.2\msvc2017\include\QtGui;D:\Qt\5.13.2\msvc2017\include\QtANGLE;D:\Qt\5.13.2\msvc2017\include\QtNetwork;D:\Qt\5.13.2\msvc2017\include\QtCore;/include;D:\Qt\5.13.2\msvc2017\mkspecs\win32-msvc</Qt_INCLUDEPATH_>
+<Qt_INCLUDEPATH_>"C:\Users\monstr\Desktop\oni ? ?????\oni\Debug\qmake\temp";D:\Qt\5.13.2\msvc2017\include;D:\Qt\5.13.2\msvc2017\include\QtWidgets;D:\Qt\5.13.2\msvc2017\include\QtMultimedia;D:\Qt\5.13.2\msvc2017\include\QtGui;D:\Qt\5.13.2\msvc2017\include\QtANGLE;D:\Qt\5.13.2\msvc2017\include\QtNetwork;D:\Qt\5.13.2\msvc2017\include\QtCore;/include;D:\Qt\5.13.2\msvc2017\mkspecs\win32-msvc</Qt_INCLUDEPATH_>
 <Qt_LIBS_>D:\Qt\5.13.2\msvc2017\lib\Qt5Widgetsd.lib;D:\Qt\5.13.2\msvc2017\lib\Qt5Multimediad.lib;D:\Qt\5.13.2\msvc2017\lib\Qt5Guid.lib;D:\Qt\5.13.2\msvc2017\lib\Qt5Networkd.lib;D:\Qt\5.13.2\msvc2017\lib\Qt5Cored.lib;D:\Qt\5.13.2\msvc2017\lib\qtmaind.lib;shell32.lib</Qt_LIBS_>
 <Qt_LIBPATH_>C:\opensslx86\lib;C:\Utils\my_sql\mysql-5.7.25-win32\lib;C:\Utils\postgresqlx86\pgsql\lib</Qt_LIBPATH_>
 <QMake_QT_SYSROOT_></QMake_QT_SYSROOT_>
@@ -44,7 +44,7 @@
     <QtBkup_QtLibrarySearchPath
       ></QtBkup_QtLibrarySearchPath>
     <QtBkup_QtVars
-      >DEFINES=/-D([^\s=]+(=(\x22(\\\\|\\\x22|[^\x22])*\x22|\S+))?)/$1/;INCLUDEPATH=INCPATH/-(?:iquote|isystem|idirafter|I)\s*(\x22[^\x22]+\x22|[^\s]+)/$1/;LIBS=/(?:(?:\/LIBPATH:|-L)(?:\x22[^\x22]+\x22|[^\s]+))|(\x22[^\x22]+\x22|[^\s]+)/$1/;LIBPATH=LIBS/(?:\/LIBPATH:|-L)(\x22[^\x22]+\x22|[^\s]+)/$1/;C:\Users\monstr\Desktop\oni\OpenNI2\Include;C:\Users\monstr\Desktop\oni\oni\opencv\install\include\</QtBkup_QtVars>
+      >DEFINES=/-D([^\s=]+(=(\x22(\\\\|\\\x22|[^\x22])*\x22|\S+))?)/$1/;INCLUDEPATH=INCPATH/-(?:iquote|isystem|idirafter|I)\s*(\x22[^\x22]+\x22|[^\s]+)/$1/;LIBS=/(?:(?:\/LIBPATH:|-L)(?:\x22[^\x22]+\x22|[^\s]+))|(\x22[^\x22]+\x22|[^\s]+)/$1/;LIBPATH=LIBS/(?:\/LIBPATH:|-L)(\x22[^\x22]+\x22|[^\s]+)/$1/</QtBkup_QtVars>
     <QtBkup_QMakeCodeLines
       ></QtBkup_QMakeCodeLines>
     <QtBkup_QtBuildConfig
