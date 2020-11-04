@@ -62,7 +62,7 @@ void MainWindow::on_btnPlay_clicked()
 	}
 	else {
 		if (tick >= pairs.count) { tick = 0; }
-		timer->start(28);
+		timer->start(24);
 		ui->btnPlay->setText("Stop");
 
 	}

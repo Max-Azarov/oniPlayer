@@ -44,7 +44,7 @@
     <QtBkup_QtLibrarySearchPath
       ></QtBkup_QtLibrarySearchPath>
     <QtBkup_QtVars
-      >DEFINES=/-D([^\s=]+(=(\x22(\\\\|\\\x22|[^\x22])*\x22|\S+))?)/$1/;INCLUDEPATH=INCPATH/-(?:iquote|isystem|idirafter|I)\s*(\x22[^\x22]+\x22|[^\s]+)/$1/;LIBS=/(?:(?:\/LIBPATH:|-L)(?:\x22[^\x22]+\x22|[^\s]+))|(\x22[^\x22]+\x22|[^\s]+)/$1/;LIBPATH=LIBS/(?:\/LIBPATH:|-L)(\x22[^\x22]+\x22|[^\s]+)/$1/;C:\Users\monstr\Desktop\oni\OpenNI2\Include;C:\Users\monstr\Desktop\oni\oni\opencv\install\include\</QtBkup_QtVars>
+      >DEFINES=/-D([^\s=]+(=(\x22(\\\\|\\\x22|[^\x22])*\x22|\S+))?)/$1/;INCLUDEPATH=INCPATH/-(?:iquote|isystem|idirafter|I)\s*(\x22[^\x22]+\x22|[^\s]+)/$1/;LIBS=/(?:(?:\/LIBPATH:|-L)(?:\x22[^\x22]+\x22|[^\s]+))|(\x22[^\x22]+\x22|[^\s]+)/$1/;LIBPATH=LIBS/(?:\/LIBPATH:|-L)(\x22[^\x22]+\x22|[^\s]+)/$1/</QtBkup_QtVars>
     <QtBkup_QMakeCodeLines
       ></QtBkup_QMakeCodeLines>
     <QtBkup_QtBuildConfig

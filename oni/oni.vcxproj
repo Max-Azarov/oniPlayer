@@ -43,19 +43,19 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)oni\OpenNI2\Include;$(SolutionDir)oni\opencv\install\include\</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;$(SolutionDir)oni\OpenNI2\Lib\OpenNI2.lib;$(SolutionDir)oni\OpenNI2\Redist\OpenNI2.dll;$(SolutionDir)oni\OpenNI2\Redist\OpenNI2.jni.dll;$(SolutionDir)oni\OpenNI2\Driver\x86\WdfCoInstaller01009.dll;$(SolutionDir)oni\opencv\install\x86\vc15\lib\*;$(SolutionDir)oni\opencv\install\x86\vc15\bin\*</LibraryPath>
-    <ExecutablePath>$(VC_ExecutablePath_x86);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH);$(SolutionDir)oni\OpenNI2\Lib\OpenNI2.lib;$(SolutionDir)oni\OpenNI2\Redist\OpenNI2.dll;$(SolutionDir)oni\OpenNI2\Redist\OpenNI2.jni.dll;$(SolutionDir)oni\OpenNI2\Driver\x86\WdfCoInstaller01009.dll;$(SolutionDir)oni\opencv\install\x86\vc15\lib\*;$(SolutionDir)oni\opencv\install\x86\vc15\bin\*</ExecutablePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
+    <ExecutablePath>$(VC_ExecutablePath_x86);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)oni\OpenNI2\Include;$(SolutionDir)oni\opencv\install\include\</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;$(SolutionDir)oni\OpenNI2\Lib\OpenNI2.lib;$(SolutionDir)oni\OpenNI2\Redist\OpenNI2.dll;$(SolutionDir)oni\OpenNI2\Redist\OpenNI2.jni.dll;$(SolutionDir)oni\OpenNI2\Driver\x86\WdfCoInstaller01009.dll;$(SolutionDir)oni\opencv\install\x86\vc15\lib\*;$(SolutionDir)oni\opencv\install\x86\vc15\bin\*</LibraryPath>
-    <ExecutablePath>$(VC_ExecutablePath_x86);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH);$(SolutionDir)oni\OpenNI2\Lib\OpenNI2.lib;$(SolutionDir)oni\OpenNI2\Redist\OpenNI2.dll;$(SolutionDir)oni\OpenNI2\Redist\OpenNI2.jni.dll;$(SolutionDir)oni\OpenNI2\Driver\x86\WdfCoInstaller01009.dll;$(SolutionDir)oni\opencv\install\x86\vc15\lib\*;$(SolutionDir)oni\opencv\install\x86\vc15\bin\*</ExecutablePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
+    <ExecutablePath>$(VC_ExecutablePath_x86);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH)</ExecutablePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Link>
-      <AdditionalLibraryDirectories>$(Qt_LIBPATH_);%(AdditionalLibraryDirectories);$(SolutionDir)oni\OpenNI2\Lib\OpenNI2.lib;$(SolutionDir)oni\OpenNI2\Redist\OpenNI2.dll;$(SolutionDir)oni\OpenNI2\Redist\OpenNI2.jni.dll;$(SolutionDir)oni\OpenNI2\Driver\x86\WdfCoInstaller01009.dll</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(Qt_LIBS_);%(AdditionalDependencies);"$(SolutionDir)oni\OpenNI2\Lib\OpenNI2.lib";"$(SolutionDir)oni\opencv\install\x86\vc15\lib\*"</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(Qt_LIBPATH_);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(Qt_LIBS_);%(AdditionalDependencies);"$(SolutionDir)oni\OpenNI2\Lib\*";"$(SolutionDir)oni\opencv\install\x86\vc15\lib\*"</AdditionalDependencies>
       <AddModuleNamesToAssembly>
       </AddModuleNamesToAssembly>
       <ModuleDefinitionFile>
@@ -70,8 +70,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Link>
-      <AdditionalLibraryDirectories>$(Qt_LIBPATH_);%(AdditionalLibraryDirectories);$(SolutionDir)oni\OpenNI2\Lib\OpenNI2.lib;$(SolutionDir)oni\OpenNI2\Redist\OpenNI2.dll;$(SolutionDir)oni\OpenNI2\Redist\OpenNI2.jni.dll;$(SolutionDir)oni\OpenNI2\Driver\x86\WdfCoInstaller01009.dll</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(Qt_LIBS_);%(AdditionalDependencies);"$(SolutionDir)oni\OpenNI2\Lib\OpenNI2.lib";"$(SolutionDir)oni\opencv\install\x86\vc15\lib\*"</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(Qt_LIBPATH_);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(Qt_LIBS_);%(AdditionalDependencies);"$(SolutionDir)oni\OpenNI2\Lib\*";"$(SolutionDir)oni\opencv\install\x86\vc15\lib\*"</AdditionalDependencies>
       <AddModuleNamesToAssembly>
       </AddModuleNamesToAssembly>
       <ModuleDefinitionFile>
@@ -92,7 +92,7 @@
     </QtHeaderSearchPath>
     <QtLibrarySearchPath>
     </QtLibrarySearchPath>
-    <QtVars>$(QMake_DEFINES_);$(QMake_INCLUDEPATH_);$(QMake_LIBS_);$(QMake_LIBPATH_);$(SolutionDir)OpenNI2\Include;$(SolutionDir)oni\opencv\install\include\</QtVars>
+    <QtVars>$(QMake_DEFINES_);$(QMake_INCLUDEPATH_);$(QMake_LIBS_);$(QMake_LIBPATH_)</QtVars>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'" Label="QtSettings">
     <QtInstall>msvc2017</QtInstall>
@@ -102,7 +102,7 @@
     </QtHeaderSearchPath>
     <QtLibrarySearchPath>
     </QtLibrarySearchPath>
-    <QtVars>$(QMake_DEFINES_);$(QMake_INCLUDEPATH_);$(QMake_LIBS_);$(QMake_LIBPATH_);$(SolutionDir)OpenNI2\Include;$(SolutionDir)oni\opencv\install\include\</QtVars>
+    <QtVars>$(QMake_DEFINES_);$(QMake_INCLUDEPATH_);$(QMake_LIBS_);$(QMake_LIBPATH_)</QtVars>
   </PropertyGroup>
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.props')">
     <Import Project="$(QtMsBuild)\qt.props" />
