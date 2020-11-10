@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string>
-#include "OpenNI2\Include\OpenNI.h"
+#include <OpenNI.h>
 #include <QtDebug>
 #include <QCoreApplication>
 #include <opencv2/core/core.hpp>
@@ -184,14 +184,13 @@ QImage tools::mat2Qimgd(const cv::Mat &source) {
 	int pixelCounts = source.cols * source.rows;
 	QImage dest(source.cols, source.rows, QImage::Format_RGB32);
 	char* pDest = (char*)dest.bits();
-	for (int i = 0; i < pixelCounts; i++)
+	for (int i = 0; i < pixelCounts; i++, pSource++)
 	{
 		quint8 value = (quint8)((*(pSource)) >> 8);
 		*(pDest++) = value;  // B
 		*(pDest++) = value;  // G
 		*(pDest++) = value;  // R
 		*(pDest++) = 0;      // Alpha
-		pSource++;
 	}
 	return dest;
 }
