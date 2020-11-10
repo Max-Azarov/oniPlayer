@@ -62,7 +62,7 @@
       </ModuleDefinitionFile>
     </Link>
     <ProjectReference>
-      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
     <ClCompile>
       <AdditionalIncludeDirectories>$(Qt_INCLUDEPATH_);%(AdditionalIncludeDirectories);$(SolutionDir)OpenNI2\Include;$(SolutionDir)oni\opencv\install\include\</AdditionalIncludeDirectories>
@@ -78,7 +78,7 @@
       </ModuleDefinitionFile>
     </Link>
     <ProjectReference>
-      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
     <ClCompile>
       <AdditionalIncludeDirectories>$(Qt_INCLUDEPATH_);%(AdditionalIncludeDirectories);$(SolutionDir)OpenNI2\Include;$(SolutionDir)oni\opencv\install\include\</AdditionalIncludeDirectories>
