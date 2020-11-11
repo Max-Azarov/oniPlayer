@@ -65,12 +65,17 @@ private:
 	int m_countOfFrames;
 	bool m_isPlay;
 	bool m_isExit;
+<<<<<<< HEAD
+=======
+	bool m_isStartStream;
+>>>>>>> 9216dec
 
 private:
 	void getImageFrame(openni::SensorType& sensorType, QImage& image);
 	QImage mat2Qimgc(const cv::Mat &);
 	QImage mat2Qimgd(const cv::Mat &);
 	void loop();
+	void restart();
 	
 };
 #endif // MAINWINDOW_H
