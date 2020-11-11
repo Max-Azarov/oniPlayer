@@ -76,7 +76,9 @@ void MainWindow::on_btnPlay_clicked()
 		m_pColorStream->start();
 		m_isPlay = true;
 		qDebug() << "play";
+		play();
 	}
+	
 }
 
 void MainWindow::stepFrame(int p) {
@@ -171,8 +173,8 @@ void MainWindow::Open()
 
 			m_tick = 0;
 			m_isPlay = false;
-			loop();
-			//play();
+			//loop();
+			play();
 			//play();
 			/*
 			Status getProperty(int propertyId, T* value) const
@@ -186,47 +188,48 @@ void MainWindow::Open()
 }
 
 void MainWindow::loop() {
-	while (m_isPlay) {
-		play();
-	}
+	
+		//play();
+	
 	
 }
 
 void MainWindow::play() {
-	QCoreApplication::processEvents();
-	openni::Status status = openni::STATUS_OK;
-	if (m_countOfFrames > 0) {
-		std::string s = std::to_string(m_tick);
-		s += "/";
-		s += std::to_string(m_countOfFrames);
-		ui->countframe->setText(s.c_str());
+	while (m_isPlay) {
+		QCoreApplication::processEvents();
+		openni::Status status = openni::STATUS_OK;
+		if (m_countOfFrames > 0) {
+			std::string s = std::to_string(m_tick);
+			s += "/";
+			s += std::to_string(m_countOfFrames);
+			ui->countframe->setText(s.c_str());
 
-		if (m_tick >= m_countOfFrames) {
-			timer->stop();
-			ui->btnPlay->setText("Play");
+			if (m_tick >= m_countOfFrames) {
+				timer->stop();
+				ui->btnPlay->setText("Play");
 
-			return;
+				return;
+			}
+
+			//play
+			openni::SensorType sensorType;
+			QImage image;
+			getImageFrame(sensorType, image);
+
+			if (sensorType == openni::SensorType::SENSOR_COLOR)
+			{
+				imageLabel2->setGeometry(0, 0, 640, 480);
+				imageLabel2->setPixmap(QPixmap::fromImage(image));
+			}
+			if (sensorType == openni::SensorType::SENSOR_DEPTH)
+			{
+				imageLabel1->setGeometry(0, 0, 640, 480);
+				imageLabel1->setPixmap(QPixmap::fromImage(image));
+			}
+
 		}
-
-		//play
-		openni::SensorType sensorType;
-		QImage image;
-		getImageFrame(sensorType, image);
-
-		if (sensorType == openni::SensorType::SENSOR_COLOR)
-		{
-			imageLabel2->setGeometry(0, 0, 640, 480);
-			imageLabel2->setPixmap(QPixmap::fromImage(image));
-		}
-		if (sensorType == openni::SensorType::SENSOR_DEPTH)
-		{
-			imageLabel1->setGeometry(0, 0, 640, 480);
-			imageLabel1->setPixmap(QPixmap::fromImage(image));
-		}
-
+		qDebug() << m_tick;
 	}
-	qDebug() << m_tick;
-	
 }
 
 void MainWindow::getImageFrame(openni::SensorType& sensorType, QImage& image)
