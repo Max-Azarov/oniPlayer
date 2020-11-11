@@ -96,6 +96,7 @@ void MainWindow::on_slider_sliderReleased()
 {
 	//slider
 	int position = ui->slider->value();
+	qDebug() << position;
 	m_pbc->seek(*m_pColorStream, position);
 	m_tick = position;
 	m_isPlay = false;
@@ -107,8 +108,9 @@ void MainWindow::on_slider_sliderPressed()
 {
 	//slider
 	timer->stop();
-	int position = ui->slider->value();
-	m_pbc->seek(*m_pColorStream, position);
+	m_isPlay = false;
+	//int position = ui->slider->value();
+	//m_pbc->seek(*m_pColorStream, position);
 }
 
 void MainWindow::Open()
@@ -138,11 +140,14 @@ void MainWindow::Open()
 			ui->slider->setValue(0);
 			
 			int sw = ui->slider->width();
+			qDebug() << sw;
 			m_countOfFrames = m_pbc->getNumberOfFrames(*m_pColorStream);
+			/*
 			if (m_countOfFrames > sw) {
 				int step = int(m_countOfFrames / sw);
 				ui->slider->setPageStep(step);
 			}
+			*/
 			ui->slider->setMaximum(m_countOfFrames);
 
 			window1->setWindowTitle("Depth");
@@ -158,10 +163,8 @@ void MainWindow::Open()
 			ui->btnPlay->setText("Stop");
 			loop();
 			timer->stop();
-			//if (m_device.isValid()) m_device.close();
 			openni::OpenNI::shutdown();
-			//play();
-			//play();
+			if (m_device.isValid()) m_device.close();
 			/*
 			Status getProperty(int propertyId, T* value) const
 			{
@@ -180,6 +183,8 @@ void MainWindow::loop() {
 				m_pDepthStream->start();
 				m_pColorStream->start();
 				m_pbc->setSpeed(1.0);
+				this->ui->btnL->setEnabled(false);
+				this->ui->btnR->setEnabled(false);
 				m_isStartStream = true;
 			}
 			play();
@@ -189,6 +194,8 @@ void MainWindow::loop() {
 				//m_pDepthStream->stop();
 				//m_pColorStream->stop();
 				m_pbc->setSpeed(-1.0);
+				this->ui->btnL->setEnabled(true);
+				this->ui->btnR->setEnabled(true);
 				m_isStartStream = false;
 			}
 			//play();
@@ -200,7 +207,6 @@ void MainWindow::loop() {
 void MainWindow::play() {
 	openni::Status status = openni::STATUS_OK;
 	if (m_countOfFrames > 0) {
-		
 
 		if (m_tick >= m_countOfFrames) {
 			m_isPlay = false;
@@ -225,7 +231,6 @@ void MainWindow::play() {
 		}
 
 	}
-	//qDebug() << m_tick;
 }
 
 void MainWindow::getImageFrame(openni::SensorType& sensorType, QImage& image)
@@ -263,6 +268,7 @@ void MainWindow::getImageFrame(openni::SensorType& sensorType, QImage& image)
 		break;
 	}
 	}
+	qDebug() << m_tick;
 }
 
 QImage MainWindow::mat2Qimgc(const cv::Mat &src) {
@@ -307,120 +313,3 @@ void MainWindow::restart() {
 	m_isExit = true;
 	openni::OpenNI::initialize();
 }
-
-
-//openni::Status status = openni::STATUS_OK;
-//status = openni::OpenNI::initialize();
-//openni::Device device;
-//status = device.open(fileName);
-//std::string info;
-
-//info.append(m_device.getDeviceInfo().getName());
-//info.append(" файл: ");
-//info.append(m_device.fileName);
-
-//openni::VideoStream videoStream;//depth, color;
-
-//status = videoStream.create(m_device, sensorType);
-//qDebug() << status;
-
-//Log(status, "SENSOR_DEPTH");
-//status = color.create(m_device, openni::SENSOR_COLOR);
-//Log(status, "SENSOR_COLOR");
-
-//color.start();
-//depth.start();
-
-/*
-	while (numOfFrames > countframe && numOfFrames > dcountframe)
-	{
-		openni::OpenNI::waitForAnyStream(stream, 2, &changedIndex);
-		QCoreApplication::processEvents();
-
-		switch (changedIndex)
-		{
-		case 0:
-		{
-			countframe++;
-			depth.readFrame(&depthFrame);
-			dframe.create(depthFrame.getHeight(), depthFrame.getWidth(), CV_16UC1);
-			dframe.data = (uchar*)depthFrame.getData();
-			//cv::imshow( "Depth", dframe );
-			QImage dimage = tools::mat2Qimgd(dframe);
-			P.ip[countframe].index = countframe;
-			//pairs[countframe].dframe = dframe;
-			P.ip[countframe].dframe = dimage;
-
-			break;
-		}
-		case 1:
-		{
-			dcountframe++;
-			color.readFrame(&colorFrame);
-			const openni::RGB888Pixel* imageBuffer = (const openni::RGB888Pixel*)colorFrame.getData();
-			frame.create(colorFrame.getHeight(), colorFrame.getWidth(), CV_8UC3);
-			memcpy(frame.data, imageBuffer, 3 * colorFrame.getHeight()*colorFrame.getWidth() * sizeof(uint8_t));
-			cv::cvtColor(frame, frame, CV_BGR2RGB);
-			//cv::imshow( "RGB", frame );
-			//QImage image = QImage(frame.data, frame.cols, frame.rows, QImage::Format_RGB888).rgbSwapped();
-			QImage image = tools::mat2Qimgc(frame);
-			P.ip[dcountframe].index = dcountframe;
-			//pairs[countframe].cframe = frame;
-			P.ip[dcountframe].cframe = image;
-
-			break;
-		}
-		}
-		std::string info = std::to_string(countframe);
-		info += " ";
-		info += std::to_string(numOfFrames);
-		//Loging(info.c_str());
-	}
-	*/
-	/*
-	depth.stop();
-	color.stop();
-	depth.destroy();
-	color.destroy();
-	device.close();
-	openni::OpenNI::shutdown();
-	return P;
-	*/
-
-	//if (sensorType == openni::SENSOR_COLOR) image = mat2Qimgc(cvFrame);
-
-	/*
-	color.readFrame(&colorFrame);
-	const openni::RGB888Pixel* imageBuffer = (const openni::RGB888Pixel*)colorFrame.getData();
-	frame.create(colorFrame.getHeight(), colorFrame.getWidth(), CV_8UC3);
-	memcpy(frame.data, imageBuffer, 3 * colorFrame.getHeight()*colorFrame.getWidth() * sizeof(uint8_t));
-	cv::cvtColor(frame, frame, CV_BGR2RGB);
-	//cv::imshow( "RGB", frame );
-	//QImage image = QImage(frame.data, frame.cols, frame.rows, QImage::Format_RGB888).rgbSwapped();
-	QImage image = tools::mat2Qimgc(frame);
-	P.ip[dcountframe].index = dcountframe;
-	//pairs[countframe].cframe = frame;
-	P.ip[dcountframe].cframe = image;
-	*/
-	//cv::Mat dframe;
-		//openni::VideoFrameRef depthFrame;
-		//int countframe = -1;
-		//int dcountframe = -1;
-		//int changedIndex;
-
-		//openni::VideoStream** stream = new openni::VideoStream*[2];
-		//stream[0] = &depth;
-		//stream[1] = &color;
-
-		//int numOfFrames = -2;
-		//openni::Status rc = color.getProperty<int>(openni::STREAM_PROPERTY_NUMBER_OF_FRAMES, &numOfFrames);
-		//if (rc != openni::STATUS_OK)
-		//{
-		//	numOfFrames = 0;
-		//}
-
-		//tools::Pairs P;
-		//P.ip = new ImagePair[numOfFrames + 1]();
-		//P.count = numOfFrames;
-		//Status seek(const VideoStream& stream, int frameIndex);
-		//m_pbc = m_device.getPlaybackControl();
