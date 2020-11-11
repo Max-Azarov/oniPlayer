@@ -57,16 +57,16 @@ void MainWindow::on_btnL_clicked()
 void MainWindow::on_btnPlay_clicked()
 {
 	if (m_isPlay) {
-		//timer->stop();
 		ui->btnPlay->setText("Play");
 		m_isPlay = false;
-		qDebug() << "stop";
 	}
 	else {
-		//timer->start(50);
 		ui->btnPlay->setText("Stop");
 		m_isPlay = true;
-		qDebug() << "play";
+		if (m_tick >= m_countOfFrames) {
+			m_tick = 0;
+			m_pbc->seek(*m_pColorStream, m_tick);
+		}
 	}
 	
 }
@@ -74,6 +74,10 @@ void MainWindow::on_btnPlay_clicked()
 void MainWindow::tickPosition()
 {
 	ui->slider->setValue(m_tick);
+	std::string s = std::to_string(m_tick);
+	s += "/";
+	s += std::to_string(m_countOfFrames);
+	ui->countframe->setText(s.c_str());
 }
 
 void MainWindow::on_btnR_clicked()
@@ -93,6 +97,9 @@ void MainWindow::on_slider_sliderReleased()
 	//slider
 	int position = ui->slider->value();
 	m_pbc->seek(*m_pColorStream, position);
+	m_tick = position;
+	m_isPlay = false;
+	ui->btnPlay->setText("Play");
 	timer->start(50);
 }
 
@@ -124,7 +131,6 @@ void MainWindow::Open()
 			
 			status = m_pDepthStream->create(m_device, openni::SENSOR_DEPTH);
 			status = m_pColorStream->create(m_device, openni::SENSOR_COLOR);
-			qDebug() << "hello";
 			m_pbc = m_device.getPlaybackControl();
 
 			f.close();
@@ -194,15 +200,11 @@ void MainWindow::loop() {
 void MainWindow::play() {
 	openni::Status status = openni::STATUS_OK;
 	if (m_countOfFrames > 0) {
-		std::string s = std::to_string(m_tick);
-		s += "/";
-		s += std::to_string(m_countOfFrames);
-		ui->countframe->setText(s.c_str());
+		
 
 		if (m_tick >= m_countOfFrames) {
-			timer->stop();
+			m_isPlay = false;
 			ui->btnPlay->setText("Play");
-
 			return;
 		}
 
