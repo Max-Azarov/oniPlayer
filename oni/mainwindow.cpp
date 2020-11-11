@@ -35,6 +35,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), this, SLOT(slotTimerAlarm()));
+
+	
 }
 
 void MainWindow::slotTimerAlarm()
@@ -46,10 +48,7 @@ void MainWindow::slotTimerAlarm()
 MainWindow::~MainWindow()
 {
 	delete ui;
-	delete m_pColorStream;
-	delete m_pDepthStream;
 	openni::OpenNI::shutdown();
-	delete[] m_vsArr;
 }
 
 void MainWindow::on_btnL_clicked()
@@ -124,28 +123,23 @@ void MainWindow::on_slider_sliderPressed()
 
 void MainWindow::Open()
 {
-	
 	QString fileName = QFileDialog::getOpenFileName(this, QString("Открыть файл"), QString("."), QString("ONI (*.oni)"));
+	restart();
 	if (fileName.size() > 0) {
 		QFile f(fileName);
 		if (f.open(QIODevice::ReadOnly))
 		{
-			restart();
-			openni::OpenNI::shutdown();
-			
 			openni::Status status = openni::STATUS_OK;
-			status = openni::OpenNI::initialize();
-			qDebug() << status;
-			status = openni::OpenNI::initialize();
-			qDebug() << status;
 			status = m_device.open(f.fileName().toStdString().c_str());
-			m_pColorStream = new openni::VideoStream;
-			m_pDepthStream = new openni::VideoStream;
-			status = m_pDepthStream->create(m_device, openni::SENSOR_DEPTH);
-			status = m_pColorStream->create(m_device, openni::SENSOR_COLOR);
-			m_vsArr = new openni::VideoStream*[2];
+
+			m_pColorStream = &openni::VideoStream();
+			m_pDepthStream = &openni::VideoStream();
 			m_vsArr[0] = m_pDepthStream;
 			m_vsArr[1] = m_pColorStream;
+			
+			status = m_pDepthStream->create(m_device, openni::SENSOR_DEPTH);
+			status = m_pColorStream->create(m_device, openni::SENSOR_COLOR);
+
 			m_pbc = m_device.getPlaybackControl();
 
 			f.close();
@@ -168,16 +162,11 @@ void MainWindow::Open()
 			window2->setGeometry(700, 180, 640, 480);
 			window2->show();
 
-<<<<<<< HEAD
-			m_tick = 0;
-			m_isPlay = false;
 			m_isExit = false;
-=======
-			
-			
-			
->>>>>>> 9216dec
+
 			loop();
+			if (m_device.isValid()) m_device.close();
+			openni::OpenNI::shutdown();
 			//play();
 			//play();
 			/*
@@ -192,8 +181,6 @@ void MainWindow::Open()
 }
 
 void MainWindow::loop() {
-<<<<<<< HEAD
-=======
 	while (!m_isExit) {
 		if (m_isPlay) {
 			if (!m_isStartStream) {
@@ -212,33 +199,9 @@ void MainWindow::loop() {
 		}
 		QCoreApplication::processEvents();
 	}
->>>>>>> 9216dec
-	
-		qDebug() << 111;
-		QCoreApplication::processEvents();
-		qDebug() << 112;
-		play();
-		qDebug() << 115;
-	//}
 }
 
 void MainWindow::play() {
-<<<<<<< HEAD
-	while (true) {
-		openni::Status status = openni::STATUS_OK;
-		if (m_countOfFrames > 0) {
-			std::string s = std::to_string(m_tick);
-			s += "/";
-			s += std::to_string(m_countOfFrames);
-			ui->countframe->setText(s.c_str());
-
-			if (m_tick >= m_countOfFrames) {
-				timer->stop();
-				ui->btnPlay->setText("Play");
-
-				return;
-			}
-=======
 	openni::Status status = openni::STATUS_OK;
 	if (m_countOfFrames > 0) {
 		std::string s = std::to_string(m_tick);
@@ -249,31 +212,28 @@ void MainWindow::play() {
 		if (m_tick >= m_countOfFrames) {
 			timer->stop();
 			ui->btnPlay->setText("Play");
->>>>>>> 9216dec
 
-			//play
-			openni::SensorType sensorType;
-			QImage image;
-			getImageFrame(sensorType, image);
-
-			if (sensorType == openni::SensorType::SENSOR_COLOR)
-			{
-				imageLabel2->setGeometry(0, 0, 640, 480);
-				imageLabel2->setPixmap(QPixmap::fromImage(image));
-			}
-			if (sensorType == openni::SensorType::SENSOR_DEPTH)
-			{
-				imageLabel1->setGeometry(0, 0, 640, 480);
-				imageLabel1->setPixmap(QPixmap::fromImage(image));
-			}
-
+			return;
 		}
-		qDebug() << m_tick;
+
+		//play
+		openni::SensorType sensorType;
+		QImage image;
+		getImageFrame(sensorType, image);
+
+		if (sensorType == openni::SensorType::SENSOR_COLOR)
+		{
+			imageLabel2->setGeometry(0, 0, 640, 480);
+			imageLabel2->setPixmap(QPixmap::fromImage(image));
+		}
+		if (sensorType == openni::SensorType::SENSOR_DEPTH)
+		{
+			imageLabel1->setGeometry(0, 0, 640, 480);
+			imageLabel1->setPixmap(QPixmap::fromImage(image));
+		}
+
 	}
-<<<<<<< HEAD
-=======
 	qDebug() << m_tick;
->>>>>>> 9216dec
 }
 
 void MainWindow::getImageFrame(openni::SensorType& sensorType, QImage& image)
@@ -343,13 +303,19 @@ QImage MainWindow::mat2Qimgd(const cv::Mat &source) {
 }
 
 void MainWindow::restart() {
+	if (m_device.isValid()) m_device.close();
+	openni::OpenNI::shutdown();
 	window1->hide();
 	window2->hide();
 	hide();
+	m_pColorStream = nullptr;
+	m_pDepthStream = nullptr;
+
 	m_tick = 0;
 	m_isPlay = true;
 	m_isStartStream = false;
-	m_isExit = false;
+	m_isExit = true;
+	openni::OpenNI::initialize();
 }
 
 //openni::Status status = openni::STATUS_OK;
