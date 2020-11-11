@@ -91,8 +91,6 @@ void MainWindow::stepFrame(int p) {
 	}
 }
 
-
-
 void MainWindow::tickPosition()
 {
 	ui->slider->setValue(m_tick);
@@ -142,11 +140,11 @@ void MainWindow::Open()
 			status = m_device.open(f.fileName().toStdString().c_str());
 			m_pColorStream = new openni::VideoStream;
 			m_pDepthStream = new openni::VideoStream;
+			status = m_pDepthStream->create(m_device, openni::SENSOR_DEPTH);
+			status = m_pColorStream->create(m_device, openni::SENSOR_COLOR);
 			m_vsArr = new openni::VideoStream*[2];
 			m_vsArr[0] = m_pDepthStream;
 			m_vsArr[1] = m_pColorStream;
-			status = m_pDepthStream->create(m_device, openni::SENSOR_DEPTH);
-			status = m_pColorStream->create(m_device, openni::SENSOR_COLOR);
 			m_pbc = m_device.getPlaybackControl();
 
 			f.close();
@@ -171,6 +169,7 @@ void MainWindow::Open()
 
 			m_tick = 0;
 			m_isPlay = false;
+			m_isExit = false;
 			loop();
 			//play();
 			//play();
@@ -186,47 +185,50 @@ void MainWindow::Open()
 }
 
 void MainWindow::loop() {
-	while (m_isPlay) {
-		play();
-	}
 	
+		qDebug() << 111;
+		QCoreApplication::processEvents();
+		qDebug() << 112;
+		play();
+		qDebug() << 115;
+	//}
 }
 
 void MainWindow::play() {
-	QCoreApplication::processEvents();
-	openni::Status status = openni::STATUS_OK;
-	if (m_countOfFrames > 0) {
-		std::string s = std::to_string(m_tick);
-		s += "/";
-		s += std::to_string(m_countOfFrames);
-		ui->countframe->setText(s.c_str());
+	while (true) {
+		openni::Status status = openni::STATUS_OK;
+		if (m_countOfFrames > 0) {
+			std::string s = std::to_string(m_tick);
+			s += "/";
+			s += std::to_string(m_countOfFrames);
+			ui->countframe->setText(s.c_str());
 
-		if (m_tick >= m_countOfFrames) {
-			timer->stop();
-			ui->btnPlay->setText("Play");
+			if (m_tick >= m_countOfFrames) {
+				timer->stop();
+				ui->btnPlay->setText("Play");
 
-			return;
+				return;
+			}
+
+			//play
+			openni::SensorType sensorType;
+			QImage image;
+			getImageFrame(sensorType, image);
+
+			if (sensorType == openni::SensorType::SENSOR_COLOR)
+			{
+				imageLabel2->setGeometry(0, 0, 640, 480);
+				imageLabel2->setPixmap(QPixmap::fromImage(image));
+			}
+			if (sensorType == openni::SensorType::SENSOR_DEPTH)
+			{
+				imageLabel1->setGeometry(0, 0, 640, 480);
+				imageLabel1->setPixmap(QPixmap::fromImage(image));
+			}
+
 		}
-
-		//play
-		openni::SensorType sensorType;
-		QImage image;
-		getImageFrame(sensorType, image);
-
-		if (sensorType == openni::SensorType::SENSOR_COLOR)
-		{
-			imageLabel2->setGeometry(0, 0, 640, 480);
-			imageLabel2->setPixmap(QPixmap::fromImage(image));
-		}
-		if (sensorType == openni::SensorType::SENSOR_DEPTH)
-		{
-			imageLabel1->setGeometry(0, 0, 640, 480);
-			imageLabel1->setPixmap(QPixmap::fromImage(image));
-		}
-
+		qDebug() << m_tick;
 	}
-	qDebug() << m_tick;
-	
 }
 
 void MainWindow::getImageFrame(openni::SensorType& sensorType, QImage& image)

@@ -64,6 +64,7 @@ private:
 	int m_tick;
 	int m_countOfFrames;
 	bool m_isPlay;
+	bool m_isExit;
 
 private:
 	void getImageFrame(openni::SensorType& sensorType, QImage& image);
