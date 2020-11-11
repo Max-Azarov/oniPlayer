@@ -35,13 +35,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), this, SLOT(slotTimerAlarm()));
-
-	
 }
 
 void MainWindow::slotTimerAlarm()
 {
-	//play();
 	tickPosition();
 }
 
@@ -54,37 +51,24 @@ MainWindow::~MainWindow()
 void MainWindow::on_btnL_clicked()
 {
 	//left
-	stepFrame(-1);
+	//stepFrame(-1);
 }
 
 void MainWindow::on_btnPlay_clicked()
 {
 	if (m_isPlay) {
-		timer->stop();
+		//timer->stop();
 		ui->btnPlay->setText("Play");
 		m_isPlay = false;
 		qDebug() << "stop";
 	}
 	else {
-		if (m_tick >= m_countOfFrames) { m_tick = 0; }
-		timer->start(200);
+		//timer->start(50);
 		ui->btnPlay->setText("Stop");
 		m_isPlay = true;
 		qDebug() << "play";
 	}
 	
-}
-
-void MainWindow::stepFrame(int p) {
-	if (pairs.count < 1) { return; }
-	if (p > 0) {
-		tick += 1;
-		play();
-	}
-	else {
-		tick -= 2;
-		play();
-	}
 }
 
 void MainWindow::tickPosition()
@@ -95,51 +79,52 @@ void MainWindow::tickPosition()
 void MainWindow::on_btnR_clicked()
 {
 	//right
-	stepFrame(1);
+	//stepFrame(1);
+}
+
+void MainWindow::on_slider_sliderMoved(int position)
+{
+	//slider
+	m_pbc->seek(*m_pColorStream, position);
 }
 
 void MainWindow::on_slider_sliderReleased()
 {
 	//slider
 	int position = ui->slider->value();
-	tick = position;
-	play();
-}
-
-void MainWindow::on_slider_sliderMoved(int position)
-{
-	//slider
-	tick = position;
-	play();
+	m_pbc->seek(*m_pColorStream, position);
+	timer->start(50);
 }
 
 void MainWindow::on_slider_sliderPressed()
 {
 	//slider
+	timer->stop();
 	int position = ui->slider->value();
-	tick = position;
-	play();
+	m_pbc->seek(*m_pColorStream, position);
 }
 
 void MainWindow::Open()
 {
 	QString fileName = QFileDialog::getOpenFileName(this, QString("Открыть файл"), QString("."), QString("ONI (*.oni)"));
-	restart();
+	
 	if (fileName.size() > 0) {
 		QFile f(fileName);
 		if (f.open(QIODevice::ReadOnly))
 		{
+			restart();
 			openni::Status status = openni::STATUS_OK;
 			status = m_device.open(f.fileName().toStdString().c_str());
-
+			
 			m_pColorStream = &openni::VideoStream();
 			m_pDepthStream = &openni::VideoStream();
+			
 			m_vsArr[0] = m_pDepthStream;
 			m_vsArr[1] = m_pColorStream;
 			
 			status = m_pDepthStream->create(m_device, openni::SENSOR_DEPTH);
 			status = m_pColorStream->create(m_device, openni::SENSOR_COLOR);
-
+			qDebug() << "hello";
 			m_pbc = m_device.getPlaybackControl();
 
 			f.close();
@@ -162,10 +147,12 @@ void MainWindow::Open()
 			window2->setGeometry(700, 180, 640, 480);
 			window2->show();
 
+			timer->start(50);
 			m_isExit = false;
-
+			ui->btnPlay->setText("Stop");
 			loop();
-			if (m_device.isValid()) m_device.close();
+			timer->stop();
+			//if (m_device.isValid()) m_device.close();
 			openni::OpenNI::shutdown();
 			//play();
 			//play();
@@ -186,16 +173,19 @@ void MainWindow::loop() {
 			if (!m_isStartStream) {
 				m_pDepthStream->start();
 				m_pColorStream->start();
+				m_pbc->setSpeed(1.0);
 				m_isStartStream = true;
 			}
 			play();
 		}
 		else {
 			if (m_isStartStream) {
-				m_pDepthStream->stop();
-				m_pColorStream->stop();
+				//m_pDepthStream->stop();
+				//m_pColorStream->stop();
+				m_pbc->setSpeed(-1.0);
 				m_isStartStream = false;
 			}
+			//play();
 		}
 		QCoreApplication::processEvents();
 	}
@@ -233,7 +223,7 @@ void MainWindow::play() {
 		}
 
 	}
-	qDebug() << m_tick;
+	//qDebug() << m_tick;
 }
 
 void MainWindow::getImageFrame(openni::SensorType& sensorType, QImage& image)
@@ -271,9 +261,6 @@ void MainWindow::getImageFrame(openni::SensorType& sensorType, QImage& image)
 		break;
 	}
 	}
-	
-	
-	qDebug() << m_tick;
 }
 
 QImage MainWindow::mat2Qimgc(const cv::Mat &src) {
@@ -303,8 +290,9 @@ QImage MainWindow::mat2Qimgd(const cv::Mat &source) {
 }
 
 void MainWindow::restart() {
-	if (m_device.isValid()) m_device.close();
 	openni::OpenNI::shutdown();
+	if (m_device.isValid()) m_device.close();
+	
 	window1->hide();
 	window2->hide();
 	hide();
@@ -317,6 +305,7 @@ void MainWindow::restart() {
 	m_isExit = true;
 	openni::OpenNI::initialize();
 }
+
 
 //openni::Status status = openni::STATUS_OK;
 //status = openni::OpenNI::initialize();

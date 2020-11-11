@@ -45,7 +45,6 @@ private slots:
     void Open();
 
     void play();
-    void stepFrame(int p); 
     void tickPosition();
 
 private:
