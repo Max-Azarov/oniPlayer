@@ -58,12 +58,18 @@ private:
 
 	openni::Device m_device;
 	openni::PlaybackControl* m_pbc;
-	openni::VideoStream m_depthStream;
-	openni::VideoStream m_colorStream;
-	QImage getImageFrame(openni::SensorType sensorType, int frameIndex);
-	QImage mat2Qimgc(const cv::Mat &src);
-	QImage mat2Qimgd(const cv::Mat &source);
+	openni::VideoStream* m_pDepthStream;
+	openni::VideoStream* m_pColorStream;
+	openni::VideoStream** m_vsArr;
 	int m_tick;
 	int m_countOfFrames;
+	bool m_isPlay;
+
+private:
+	void getImageFrame(openni::SensorType& sensorType, QImage& image);
+	QImage mat2Qimgc(const cv::Mat &);
+	QImage mat2Qimgd(const cv::Mat &);
+	void loop();
+	
 };
 #endif // MAINWINDOW_H
