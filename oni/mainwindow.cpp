@@ -63,8 +63,6 @@ void MainWindow::on_btnPlay_clicked()
 	if (m_isPlay) {
 		timer->stop();
 		ui->btnPlay->setText("Play");
-		m_pDepthStream->stop();
-		m_pColorStream->stop();
 		m_isPlay = false;
 		qDebug() << "stop";
 	}
@@ -72,11 +70,8 @@ void MainWindow::on_btnPlay_clicked()
 		if (m_tick >= m_countOfFrames) { m_tick = 0; }
 		timer->start(200);
 		ui->btnPlay->setText("Stop");
-		m_pDepthStream->start();
-		m_pColorStream->start();
 		m_isPlay = true;
 		qDebug() << "play";
-		play();
 	}
 	
 }
@@ -131,16 +126,20 @@ void MainWindow::on_slider_sliderPressed()
 
 void MainWindow::Open()
 {
+	
 	QString fileName = QFileDialog::getOpenFileName(this, QString("Открыть файл"), QString("."), QString("ONI (*.oni)"));
 	if (fileName.size() > 0) {
 		QFile f(fileName);
 		if (f.open(QIODevice::ReadOnly))
 		{
-			window1->hide();
-			window2->hide();
-			hide();
+			restart();
+			openni::OpenNI::shutdown();
+			
 			openni::Status status = openni::STATUS_OK;
 			status = openni::OpenNI::initialize();
+			qDebug() << status;
+			status = openni::OpenNI::initialize();
+			qDebug() << status;
 			status = m_device.open(f.fileName().toStdString().c_str());
 			m_pColorStream = new openni::VideoStream;
 			m_pDepthStream = new openni::VideoStream;
@@ -171,10 +170,11 @@ void MainWindow::Open()
 			window2->setGeometry(700, 180, 640, 480);
 			window2->show();
 
-			m_tick = 0;
-			m_isPlay = false;
-			//loop();
-			play();
+			
+			
+			
+			loop();
+			//play();
 			//play();
 			/*
 			Status getProperty(int propertyId, T* value) const
@@ -188,48 +188,60 @@ void MainWindow::Open()
 }
 
 void MainWindow::loop() {
-	
-		//play();
-	
+	while (!m_isExit) {
+		if (m_isPlay) {
+			if (!m_isStartStream) {
+				m_pDepthStream->start();
+				m_pColorStream->start();
+				m_isStartStream = true;
+			}
+			play();
+		}
+		else {
+			if (m_isStartStream) {
+				m_pDepthStream->stop();
+				m_pColorStream->stop();
+				m_isStartStream = false;
+			}
+		}
+		QCoreApplication::processEvents();
+	}
 	
 }
 
 void MainWindow::play() {
-	while (m_isPlay) {
-		QCoreApplication::processEvents();
-		openni::Status status = openni::STATUS_OK;
-		if (m_countOfFrames > 0) {
-			std::string s = std::to_string(m_tick);
-			s += "/";
-			s += std::to_string(m_countOfFrames);
-			ui->countframe->setText(s.c_str());
+	openni::Status status = openni::STATUS_OK;
+	if (m_countOfFrames > 0) {
+		std::string s = std::to_string(m_tick);
+		s += "/";
+		s += std::to_string(m_countOfFrames);
+		ui->countframe->setText(s.c_str());
 
-			if (m_tick >= m_countOfFrames) {
-				timer->stop();
-				ui->btnPlay->setText("Play");
+		if (m_tick >= m_countOfFrames) {
+			timer->stop();
+			ui->btnPlay->setText("Play");
 
-				return;
-			}
-
-			//play
-			openni::SensorType sensorType;
-			QImage image;
-			getImageFrame(sensorType, image);
-
-			if (sensorType == openni::SensorType::SENSOR_COLOR)
-			{
-				imageLabel2->setGeometry(0, 0, 640, 480);
-				imageLabel2->setPixmap(QPixmap::fromImage(image));
-			}
-			if (sensorType == openni::SensorType::SENSOR_DEPTH)
-			{
-				imageLabel1->setGeometry(0, 0, 640, 480);
-				imageLabel1->setPixmap(QPixmap::fromImage(image));
-			}
-
+			return;
 		}
-		qDebug() << m_tick;
+
+		//play
+		openni::SensorType sensorType;
+		QImage image;
+		getImageFrame(sensorType, image);
+
+		if (sensorType == openni::SensorType::SENSOR_COLOR)
+		{
+			imageLabel2->setGeometry(0, 0, 640, 480);
+			imageLabel2->setPixmap(QPixmap::fromImage(image));
+		}
+		if (sensorType == openni::SensorType::SENSOR_DEPTH)
+		{
+			imageLabel1->setGeometry(0, 0, 640, 480);
+			imageLabel1->setPixmap(QPixmap::fromImage(image));
+		}
+
 	}
+	qDebug() << m_tick;
 }
 
 void MainWindow::getImageFrame(openni::SensorType& sensorType, QImage& image)
@@ -296,6 +308,16 @@ QImage MainWindow::mat2Qimgd(const cv::Mat &source) {
 		*(pDest++) = 0;      // Alpha
 	}
 	return dest;
+}
+
+void MainWindow::restart() {
+	window1->hide();
+	window2->hide();
+	hide();
+	m_tick = 0;
+	m_isPlay = true;
+	m_isStartStream = false;
+	m_isExit = false;
 }
 
 //openni::Status status = openni::STATUS_OK;
