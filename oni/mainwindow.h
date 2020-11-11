@@ -60,7 +60,7 @@ private:
 	openni::PlaybackControl* m_pbc;
 	openni::VideoStream* m_pDepthStream;
 	openni::VideoStream* m_pColorStream;
-	openni::VideoStream** m_vsArr;
+	openni::VideoStream* m_vsArr[2];
 	int m_tick;
 	int m_countOfFrames;
 	bool m_isPlay;
