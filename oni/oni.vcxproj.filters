@@ -30,17 +30,11 @@
     <ClCompile Include="mainwindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tools.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="imagewindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="tools.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ui_imagewindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>

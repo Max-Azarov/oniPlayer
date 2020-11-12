@@ -10,12 +10,7 @@
 #include <string>
 #include <QCloseEvent>
 
-
 #include "imagewindow.h"
-#include "tools.h"
-
-tools::Pairs pairs;
-int tick = 0;
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),

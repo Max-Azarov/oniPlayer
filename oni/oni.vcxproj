@@ -137,14 +137,12 @@
     <ClCompile Include="imagewindow.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainwindow.cpp" />
-    <ClCompile Include="tools.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ui_imagewindow.h" />
     <ClInclude Include="ui_mainwindow.h" />
     <QtMoc Include="mainwindow.h" />
     <QtMoc Include="imagewindow.h" />
-    <ClInclude Include="tools.h" />
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="imagewindow.ui" />
