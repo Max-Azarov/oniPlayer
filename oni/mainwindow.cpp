@@ -325,6 +325,8 @@ void MainWindow::restart() {
 void MainWindow::closeEvent(QCloseEvent* event)
 {
 	m_isExit = true;
+	openni::OpenNI::shutdown();
+	if (m_device.isValid()) m_device.close();
 	QApplication::quit();
 	event->accept();
 }
