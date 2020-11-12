@@ -67,6 +67,8 @@ private:
 	bool m_isPlay;
 	bool m_isExit;
 	bool m_isStartStream;
+	int m_frameWidth;
+	int m_frameHeight;
 
 private:
 	void getImageFrame(openni::SensorType& sensorType, QImage& image);
