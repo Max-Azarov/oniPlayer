@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(timer, SIGNAL(timeout()), this, SLOT(slotTimerAlarm()));
 	this->ui->btnL->setEnabled(false);
 	this->ui->btnR->setEnabled(false);
+	this->ui->btnPlay->setEnabled(false);
 }
 
 void MainWindow::slotTimerAlarm()
@@ -50,8 +51,6 @@ MainWindow::~MainWindow()
 	delete ui;
 	openni::OpenNI::shutdown();
 }
-
-
 
 void MainWindow::on_btnPlay_clicked()
 {
@@ -107,6 +106,8 @@ void MainWindow::on_slider_sliderReleased()
 {
 	//slider
 	int position = ui->slider->value();
+	position = (position > m_countOfFrames ? m_countOfFrames : position);
+	position = (position < m_numFirstFrame ? m_numFirstFrame : position);
 	m_pbc->seek(*m_pColorStream, position);
 	m_tick = position;
 	m_isPlay = false;
@@ -150,8 +151,7 @@ void MainWindow::Open()
 			m_countOfFrames = m_pbc->getNumberOfFrames(*m_pColorStream);
 
 			ui->slider->setMaximum(m_countOfFrames);
-
-			
+			this->ui->btnPlay->setEnabled(true);
 
 			timer->start(50);
 			m_isExit = false;
