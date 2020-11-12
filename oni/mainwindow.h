@@ -62,6 +62,8 @@ private:
 	openni::VideoStream* m_vsArr[2];
 	int m_tick;
 	int m_countOfFrames;
+	int m_numFirstFrame;
+	bool m_bNumFirstFrame;
 	bool m_isPlay;
 	bool m_isExit;
 	bool m_isStartStream;
@@ -72,6 +74,7 @@ private:
 	QImage mat2Qimgd(const cv::Mat &);
 	void loop();
 	void restart();
+	void MainWindow::closeEvent(QCloseEvent* event);
 	
 };
 #endif // MAINWINDOW_H

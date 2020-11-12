@@ -8,6 +8,7 @@
 #include <QGraphicsPixmapItem>
 #include <QDebug>
 #include <string>
+#include <QCloseEvent>
 
 
 #include "imagewindow.h"
@@ -35,6 +36,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), this, SLOT(slotTimerAlarm()));
+	this->ui->btnL->setEnabled(false);
+	this->ui->btnR->setEnabled(false);
 }
 
 void MainWindow::slotTimerAlarm()
@@ -48,11 +51,7 @@ MainWindow::~MainWindow()
 	openni::OpenNI::shutdown();
 }
 
-void MainWindow::on_btnL_clicked()
-{
-	//left
-	//stepFrame(-1);
-}
+
 
 void MainWindow::on_btnPlay_clicked()
 {
@@ -82,21 +81,29 @@ void MainWindow::tickPosition()
 
 void MainWindow::on_btnR_clicked()
 {
-	//right
-	//stepFrame(1);
+	// right
+	int position = m_tick + 1;
+	m_pbc->seek(*m_pColorStream, position);
+	qDebug() << "+1";
+}
+
+void MainWindow::on_btnL_clicked()
+{
+	// left
+	int position = m_tick - 1;
+	m_pbc->seek(*m_pColorStream, position);
+	qDebug() << "-1";
 }
 
 void MainWindow::on_slider_sliderMoved(int position)
 {
 	//slider
-	m_pbc->seek(*m_pColorStream, position);
 }
 
 void MainWindow::on_slider_sliderReleased()
 {
 	//slider
 	int position = ui->slider->value();
-	qDebug() << position;
 	m_pbc->seek(*m_pColorStream, position);
 	m_tick = position;
 	m_isPlay = false;
@@ -109,8 +116,6 @@ void MainWindow::on_slider_sliderPressed()
 	//slider
 	timer->stop();
 	m_isPlay = false;
-	//int position = ui->slider->value();
-	//m_pbc->seek(*m_pColorStream, position);
 }
 
 void MainWindow::Open()
@@ -139,15 +144,8 @@ void MainWindow::Open()
 			show();
 			ui->slider->setValue(0);
 			
-			int sw = ui->slider->width();
-			qDebug() << sw;
 			m_countOfFrames = m_pbc->getNumberOfFrames(*m_pColorStream);
-			/*
-			if (m_countOfFrames > sw) {
-				int step = int(m_countOfFrames / sw);
-				ui->slider->setPageStep(step);
-			}
-			*/
+
 			ui->slider->setMaximum(m_countOfFrames);
 
 			window1->setWindowTitle("Depth");
@@ -161,6 +159,8 @@ void MainWindow::Open()
 			timer->start(50);
 			m_isExit = false;
 			ui->btnPlay->setText("Stop");
+			m_bNumFirstFrame = false;
+
 			loop();
 			timer->stop();
 			openni::OpenNI::shutdown();
@@ -217,8 +217,8 @@ void MainWindow::play() {
 		//play
 		openni::SensorType sensorType;
 		QImage image;
-		getImageFrame(sensorType, image);
 
+		getImageFrame(sensorType, image);
 		if (sensorType == openni::SensorType::SENSOR_COLOR)
 		{
 			imageLabel2->setGeometry(0, 0, 640, 480);
@@ -229,7 +229,17 @@ void MainWindow::play() {
 			imageLabel1->setGeometry(0, 0, 640, 480);
 			imageLabel1->setPixmap(QPixmap::fromImage(image));
 		}
-
+		getImageFrame(sensorType, image);
+		if (sensorType == openni::SensorType::SENSOR_COLOR)
+		{
+			imageLabel2->setGeometry(0, 0, 640, 480);
+			imageLabel2->setPixmap(QPixmap::fromImage(image));
+		}
+		if (sensorType == openni::SensorType::SENSOR_DEPTH)
+		{
+			imageLabel1->setGeometry(0, 0, 640, 480);
+			imageLabel1->setPixmap(QPixmap::fromImage(image));
+		}
 	}
 }
 
@@ -268,7 +278,12 @@ void MainWindow::getImageFrame(openni::SensorType& sensorType, QImage& image)
 		break;
 	}
 	}
-	qDebug() << m_tick;
+	if (!m_bNumFirstFrame) {
+		m_numFirstFrame = openFrame.getFrameIndex();
+		this->ui->slider->setMinimum(m_numFirstFrame);
+		m_bNumFirstFrame = true;
+	}
+	//qDebug() << m_tick;
 }
 
 QImage MainWindow::mat2Qimgc(const cv::Mat &src) {
@@ -312,4 +327,11 @@ void MainWindow::restart() {
 	m_isStartStream = false;
 	m_isExit = true;
 	openni::OpenNI::initialize();
+}
+
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+	m_isExit = true;
+	QApplication::quit();
+	event->accept();
 }
