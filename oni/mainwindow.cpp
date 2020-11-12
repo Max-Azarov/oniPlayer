@@ -67,7 +67,6 @@ void MainWindow::on_btnPlay_clicked()
 			m_pbc->seek(*m_pColorStream, m_tick);
 		}
 	}
-	
 }
 
 void MainWindow::tickPosition()
@@ -83,16 +82,18 @@ void MainWindow::on_btnR_clicked()
 {
 	// right
 	int position = m_tick + 1;
+	position = (position > m_countOfFrames ? m_countOfFrames : position);
 	m_pbc->seek(*m_pColorStream, position);
-	qDebug() << "+1";
+	play();
 }
 
 void MainWindow::on_btnL_clicked()
 {
 	// left
 	int position = m_tick - 1;
+	position = (position < m_numFirstFrame ? m_numFirstFrame : position);
 	m_pbc->seek(*m_pColorStream, position);
-	qDebug() << "-1";
+	play();
 }
 
 void MainWindow::on_slider_sliderMoved(int position)
@@ -191,14 +192,11 @@ void MainWindow::loop() {
 		}
 		else {
 			if (m_isStartStream) {
-				//m_pDepthStream->stop();
-				//m_pColorStream->stop();
 				m_pbc->setSpeed(-1.0);
 				this->ui->btnL->setEnabled(true);
 				this->ui->btnR->setEnabled(true);
 				m_isStartStream = false;
 			}
-			//play();
 		}
 		QCoreApplication::processEvents();
 	}
@@ -240,6 +238,7 @@ void MainWindow::play() {
 			imageLabel1->setGeometry(0, 0, 640, 480);
 			imageLabel1->setPixmap(QPixmap::fromImage(image));
 		}
+		
 	}
 }
 
@@ -279,7 +278,7 @@ void MainWindow::getImageFrame(openni::SensorType& sensorType, QImage& image)
 	}
 	}
 	if (!m_bNumFirstFrame) {
-		m_numFirstFrame = openFrame.getFrameIndex();
+		m_numFirstFrame = m_tick;
 		this->ui->slider->setMinimum(m_numFirstFrame);
 		m_bNumFirstFrame = true;
 	}
