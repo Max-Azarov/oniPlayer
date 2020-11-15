@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <string>
 #include <QCloseEvent>
+#include <QThread>
 
 #include "imagewindow.h"
 
@@ -34,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	this->ui->btnL->setEnabled(false);
 	this->ui->btnR->setEnabled(false);
 	this->ui->btnPlay->setEnabled(false);
+	this->ui->slider->setEnabled(false);
 }
 
 void MainWindow::slotTimerAlarm()
@@ -147,12 +149,7 @@ void MainWindow::Open()
 
 			ui->slider->setMaximum(m_countOfFrames);
 			this->ui->btnPlay->setEnabled(true);
-
-			timer->start(50);
-			m_isExit = false;
-			ui->btnPlay->setText("Stop");
-			m_bNumFirstFrame = false;
-
+			
 			loop();
 			timer->stop();
 			openni::OpenNI::shutdown();
@@ -173,6 +170,7 @@ void MainWindow::loop() {
 				m_isStartStream = true;
 			}
 			play();
+			//QTimer::singleShot(5, this, SLOT(loop()));
 		}
 		else {
 			if (m_isStartStream) {
@@ -181,6 +179,8 @@ void MainWindow::loop() {
 				this->ui->btnR->setEnabled(true);
 				m_isStartStream = false;
 			}
+			QThread::msleep(50);
+			//QTimer::singleShot(1000, this, SLOT(loop()));
 		}
 		QCoreApplication::processEvents();
 	}
@@ -246,6 +246,7 @@ void MainWindow::getImageFrame(openni::SensorType& sensorType, QImage& image)
 		cvFrame.create(openFrame.getHeight(), openFrame.getWidth(), CV_16UC1);
 		cvFrame.data = (uchar*)openFrame.getData();
 		image = mat2Qimgd(cvFrame);
+		qDebug() << openFrame.getFrameIndex() << "depth";
 		break;
 	}
 	case 1:
@@ -258,6 +259,7 @@ void MainWindow::getImageFrame(openni::SensorType& sensorType, QImage& image)
 		cv::cvtColor(cvFrame, cvFrame, CV_BGR2RGB);
 		image = mat2Qimgc(cvFrame);
 		if (openFrame.isValid()) m_tick = openFrame.getFrameIndex();
+		qDebug() << openFrame.getFrameIndex() << "color";
 		break;
 	}
 	}
@@ -308,17 +310,21 @@ QImage MainWindow::mat2Qimgd(const cv::Mat &source) {
 void MainWindow::restart() {
 	openni::OpenNI::shutdown();
 	if (m_device.isValid()) m_device.close();
+
+	timer->start(50);
+	m_isExit = false;
+	m_isPlay = false;
+	ui->btnPlay->setText("Play");
+	m_bNumFirstFrame = false;
 	
 	window1->hide();
 	window2->hide();
 	hide();
 	m_pColorStream = nullptr;
 	m_pDepthStream = nullptr;
-
 	m_tick = 0;
-	m_isPlay = true;
+	
 	m_isStartStream = false;
-	m_isExit = true;
 	openni::OpenNI::initialize();
 }
 

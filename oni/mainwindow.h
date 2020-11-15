@@ -46,6 +46,7 @@ private slots:
 
     void play();
     void tickPosition();
+	
 
 private:
     Ui::MainWindow *ui;
@@ -74,7 +75,9 @@ private:
 	void getImageFrame(openni::SensorType& sensorType, QImage& image);
 	QImage mat2Qimgc(const cv::Mat &);
 	QImage mat2Qimgd(const cv::Mat &);
+
 	void loop();
+	
 	void restart();
 	void MainWindow::closeEvent(QCloseEvent* event);
 	
