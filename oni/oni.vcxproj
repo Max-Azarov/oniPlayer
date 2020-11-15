@@ -134,18 +134,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="imagewindow.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainwindow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ui_imagewindow.h" />
     <ClInclude Include="ui_mainwindow.h" />
     <QtMoc Include="mainwindow.h" />
-    <QtMoc Include="imagewindow.h" />
   </ItemGroup>
   <ItemGroup>
-    <QtUic Include="imagewindow.ui" />
     <QtUic Include="mainwindow.ui" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

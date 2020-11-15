@@ -6,14 +6,11 @@
 #include <QTimer>
 #include <QTime>
 #include <QImage>
-#include "imagewindow.h"
 #include <QLabel>
 
 #include <OpenNI.h>
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/types_c.h>
-
-//class Device;
 
 namespace Ui {
 class MainWindow;
@@ -51,10 +48,10 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QTimer *timer;
-    ImageWindow *window1;
-    ImageWindow *window2;
-    QLabel *imageLabel1;
-    QLabel *imageLabel2;
+
+	QMainWindow* window;
+    QLabel* colorChanel;
+    QLabel* depthChanel;
 
 	openni::Device m_device;
 	openni::PlaybackControl* m_pbc;

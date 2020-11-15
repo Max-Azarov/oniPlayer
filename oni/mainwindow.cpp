@@ -10,8 +10,9 @@
 #include <string>
 #include <QCloseEvent>
 #include <QThread>
-
-#include "imagewindow.h"
+#include <QDesktopWidget>
+#include <QLayout>
+#include <QPalette>
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
@@ -19,16 +20,23 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
 	connect(this->ui->action, SIGNAL(triggered()), this, SLOT(Open()));
-	window1 = new ImageWindow(this);
-	imageLabel1 = new QLabel(window1);
-	imageLabel1->setBackgroundRole(QPalette::Base);
-	imageLabel1->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-	imageLabel1->setScaledContents(true);
-	window2 = new ImageWindow(this);
-	imageLabel2 = new QLabel(window2);
-	imageLabel2->setBackgroundRole(QPalette::Base);
-	imageLabel2->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-	imageLabel2->setScaledContents(true);
+	
+	window = new QMainWindow;
+	QWidget* centralWidget = new QWidget(window);
+	window->setCentralWidget(centralWidget);
+	
+	window->setWindowFlags(Qt::WindowMinMaxButtonsHint);
+	
+	colorChanel = new QLabel;
+	depthChanel = new QLabel;
+	QGridLayout* hbl = new QGridLayout;
+	hbl->addWidget(depthChanel, 0, 0,  Qt::AlignRight);
+	hbl->addWidget(colorChanel, 0, 1, Qt::AlignLeft);
+	window->centralWidget()->setLayout(hbl);
+	QPalette pall;
+	pall.setColor(window->backgroundRole(), Qt::black);
+	window->setPalette(pall);
+	window->setAutoFillBackground(true);
 
 	timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), this, SLOT(slotTimerAlarm()));
@@ -60,7 +68,7 @@ void MainWindow::on_btnPlay_clicked()
 		m_isPlay = true;
 		if (m_tick >= m_countOfFrames) {
 			m_tick = 0;
-			m_pbc->seek(*m_pColorStream, m_tick);
+			m_pbc->seek(*m_pDepthStream, m_tick);
 		}
 	}
 }
@@ -78,20 +86,21 @@ void MainWindow::on_btnR_clicked()
 {
 	// right
 	int position = m_tick + 1;
+	//qDebug() << position << "position";
 	position = (position > m_countOfFrames ? m_countOfFrames : position);
-	m_pbc->seek(*m_pColorStream, position);
+	m_pbc->seek(*m_pDepthStream, position);
 	play();
-	//qDebug() << position;
 }
 
 void MainWindow::on_btnL_clicked()
 {
 	// left
 	int position = m_tick - 1;
+	//qDebug() << position << "position";
 	position = (position < m_numFirstFrame ? m_numFirstFrame : position);
-	m_pbc->seek(*m_pColorStream, position);
+	m_pbc->seek(*m_pDepthStream, position);
 	play();
-	//qDebug() << position;
+	
 }
 
 void MainWindow::on_slider_sliderMoved(int position)
@@ -105,11 +114,12 @@ void MainWindow::on_slider_sliderReleased()
 	int position = ui->slider->value();
 	position = (position > m_countOfFrames ? m_countOfFrames : position);
 	position = (position < m_numFirstFrame ? m_numFirstFrame : position);
-	m_pbc->seek(*m_pColorStream, position);
+	m_pbc->seek(*m_pDepthStream, position);
 	m_tick = position;
 	m_isPlay = false;
 	ui->btnPlay->setText("Play");
 	timer->start(50);
+	play();
 }
 
 void MainWindow::on_slider_sliderPressed()
@@ -170,7 +180,6 @@ void MainWindow::loop() {
 				m_isStartStream = true;
 			}
 			play();
-			//QTimer::singleShot(5, this, SLOT(loop()));
 		}
 		else {
 			if (m_isStartStream) {
@@ -179,8 +188,7 @@ void MainWindow::loop() {
 				this->ui->btnR->setEnabled(true);
 				m_isStartStream = false;
 			}
-			QThread::msleep(50);
-			//QTimer::singleShot(1000, this, SLOT(loop()));
+			QThread::msleep(5);
 		}
 		QCoreApplication::processEvents();
 	}
@@ -206,24 +214,24 @@ void MainWindow::play() {
 		getImageFrame(sensorType, image);
 		if (sensorType == openni::SensorType::SENSOR_COLOR)
 		{
-			imageLabel2->setGeometry(0, 0, m_frameWidth, m_frameHeight);
-			imageLabel2->setPixmap(QPixmap::fromImage(image));
+			colorChanel->setGeometry(0, 0, m_frameWidth, m_frameHeight);
+			colorChanel->setPixmap(QPixmap::fromImage(image));
 		}
 		if (sensorType == openni::SensorType::SENSOR_DEPTH)
 		{
-			imageLabel1->setGeometry(0, 0, m_frameWidth, m_frameHeight);
-			imageLabel1->setPixmap(QPixmap::fromImage(image));
+			depthChanel->setGeometry(0, 0, m_frameWidth, m_frameHeight);
+			depthChanel->setPixmap(QPixmap::fromImage(image));
 		}
 		getImageFrame(sensorType, image);
 		if (sensorType == openni::SensorType::SENSOR_COLOR)
 		{
-			imageLabel2->setGeometry(0, 0, m_frameWidth, m_frameHeight);
-			imageLabel2->setPixmap(QPixmap::fromImage(image));
+			colorChanel->setGeometry(0, 0, m_frameWidth, m_frameHeight);
+			colorChanel->setPixmap(QPixmap::fromImage(image));
 		}
 		if (sensorType == openni::SensorType::SENSOR_DEPTH)
 		{
-			imageLabel1->setGeometry(0, 0, m_frameWidth, m_frameHeight);
-			imageLabel1->setPixmap(QPixmap::fromImage(image));
+			depthChanel->setGeometry(0, 0, m_frameWidth, m_frameHeight);
+			depthChanel->setPixmap(QPixmap::fromImage(image));
 		}
 	}
 }
@@ -246,7 +254,9 @@ void MainWindow::getImageFrame(openni::SensorType& sensorType, QImage& image)
 		cvFrame.create(openFrame.getHeight(), openFrame.getWidth(), CV_16UC1);
 		cvFrame.data = (uchar*)openFrame.getData();
 		image = mat2Qimgd(cvFrame);
-		qDebug() << openFrame.getFrameIndex() << "depth";
+		if (openFrame.isValid()) m_tick = openFrame.getFrameIndex();
+		//qDebug() << openFrame.getFrameIndex() << "depth";
+		//qDebug() << openFrame.getTimestamp()/1000 << "depth";
 		break;
 	}
 	case 1:
@@ -258,25 +268,27 @@ void MainWindow::getImageFrame(openni::SensorType& sensorType, QImage& image)
 		memcpy(cvFrame.data, imageBuffer, 3 * openFrame.getHeight()*openFrame.getWidth() * sizeof(uint8_t));
 		cv::cvtColor(cvFrame, cvFrame, CV_BGR2RGB);
 		image = mat2Qimgc(cvFrame);
-		if (openFrame.isValid()) m_tick = openFrame.getFrameIndex();
-		qDebug() << openFrame.getFrameIndex() << "color";
+		//qDebug() << openFrame.getFrameIndex() << "color";
+		//qDebug() << openFrame.getTimestamp()/1000 << "color";
 		break;
 	}
 	}
 	if (!m_bNumFirstFrame) {
+		int screenWidth = QApplication::desktop()->screenGeometry().width();
+		int screenHeight = QApplication::desktop()->screenGeometry().height();
 		m_numFirstFrame = m_tick;
 		this->ui->slider->setMinimum(m_numFirstFrame);
 		m_frameWidth = openFrame.getWidth();
 		m_frameHeight = openFrame.getHeight();
-		window1->setWindowTitle("Depth");
-		window1->setGeometry(30, 180, m_frameWidth, m_frameHeight);
-		window1->show();
-
-		window2->setWindowTitle("Color");
-		window2->setGeometry(700, 180, m_frameWidth, m_frameHeight);
-		window2->show();
+		window->setWindowTitle("Depth/Color");
+		window->move(screenWidth / 2 - m_frameWidth, this->frameSize().height());
+		window->resize(m_frameWidth * 2, m_frameHeight);
+		window->show();
 
 		m_bNumFirstFrame = true;
+
+		//qDebug() << m_pColorStream->getVideoMode().getResolutionX() << "color VideoMode";
+		//qDebug() << m_pDepthStream->getVideoMode().getResolutionY() << "depth VideoMode";
 	}
 	//qDebug() << m_tick;
 }
@@ -317,8 +329,9 @@ void MainWindow::restart() {
 	ui->btnPlay->setText("Play");
 	m_bNumFirstFrame = false;
 	
-	window1->hide();
-	window2->hide();
+	window->hide();
+	this->ui->slider->setEnabled(true);
+
 	hide();
 	m_pColorStream = nullptr;
 	m_pDepthStream = nullptr;
